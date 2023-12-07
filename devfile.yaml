@@ -4,6 +4,15 @@ attributes:
 metadata:
   name: che-qemu-demo
 components:
+- name: workspace
+  container: 
+    image: image-registry.openshift-image-registry.svc:5000/che-dev-images/qemu-workspace:latest
+    memoryLimit: 6Gi
+    mountSources: true
+    sourceMapping: /projects
+    env:
+    - name: SHELL
+      value: "/bin/zsh"
 - name: qemu
   container: 
     image: image-registry.openshift-image-registry.svc:5000/che-dev-images/qemu-dev:latest
