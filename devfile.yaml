@@ -9,11 +9,6 @@ components:
     image: image-registry.openshift-image-registry.svc:5000/che-dev-images/qemu-dev:latest
     memoryLimit: 6Gi
     mountSources: true
-    args:
-      - '-f'
-      - /dev/null
-    command:
-      - tail
     env:
     - name: SHELL
       value: "/bin/zsh"
