@@ -4,6 +4,12 @@ metadata:
   name: qemu-dev
   namespace: che-dev-images
 ---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: qemu-workspace
+  namespace: che-dev-images
+---
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
@@ -22,3 +28,22 @@ spec:
     to:
       kind: ImageStreamTag
       name: qemu-dev:latest
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: qemu-workspace
+  namespace: che-dev-images
+spec:
+  source:
+    git:
+      uri: https://github.com/cgruver/che-fedora-cpu-emulation.git
+      ref: main
+    contextDir: "qemu-image"
+  strategy:
+    dockerStrategy:
+      dockerfilePath: "./workspace.Containerfile"
+  output:
+    to:
+      kind: ImageStreamTag
+      name: qemu-workspace:latest
