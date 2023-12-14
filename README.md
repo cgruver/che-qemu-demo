@@ -58,3 +58,8 @@ cp hda.qcow2 /virtual-machines/debian
 qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel /virtual-machines/debian/vmlinuz -initrd /virtual-machines/debian/initrd.img -append 'root=/dev/vda2' -drive if=none,file=/virtual-machines/debian/hda.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -nographic
 ```
 
+```bash
+guestfish --ro -i hda.qcow2
+ls /boot
+download /boot/initrd.img-5.10.0-26-arm64 initrd.img
+```
