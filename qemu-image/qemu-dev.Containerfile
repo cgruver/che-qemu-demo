@@ -6,7 +6,7 @@ ENV HOME=${USER_HOME_DIR}
 ENV BUILDAH_ISOLATION=chroot
 ENV PATH=${PATH}:/projects/bin
 # COPY --chown=0:0 qemu-entrypoint.sh /
-RUN dnf install -y procps-ng git tar gzip zip xz unzip which shadow-utils bash zsh vi wget jq libvirt qemu-kvm virt-install ; \
+RUN dnf install -y procps-ng git tar gzip zip xz unzip which shadow-utils bash zsh vi wget jq libvirt qemu-system-aarch64 guestfs-tools ; \
   dnf update -y ; \
   dnf clean all ; \
   mkdir -p ${USER_HOME_DIR} ; \
