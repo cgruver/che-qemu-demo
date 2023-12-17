@@ -63,3 +63,17 @@ guestfish --ro -i hda.qcow2
 ls /boot
 download /boot/initrd.img-5.10.0-26-arm64 initrd.img
 ```
+
+```bash
+guestfish --ro -i -a ./hda.qcow2 << EOF > files.out
+ls /boot
+EOF
+KERNEL=$(cat files.out | grep vmlinuz- )
+INITRD=$(cat files.out | grep initrd.img- )
+guestfish --ro -i -a ./hda.qcow2 << EOF
+download /boot/${KERNEL} /projects/vm/vmlinuz
+EOF
+guestfish --ro -i -a ./hda.qcow2 << EOF
+download /boot/${INITRD} /projects/vm/initrd.img
+EOF
+```
