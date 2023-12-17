@@ -6,7 +6,7 @@ metadata:
 components:
 - name: workspace
   container: 
-    image: image-registry.openshift-image-registry.svc:5000/che-dev-images/qemu-workspace:latest
+    image: image-registry.openshift-image-registry.svc:5000/che-dev-images/fedora-workspace:latest
     memoryLimit: 2Gi
     memoryRequest: 1Gi
     cpuRequest: 500m

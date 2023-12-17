@@ -22,4 +22,3 @@ RUN dnf install -y procps-ng git tar gzip zip xz unzip which shadow-utils bash z
 USER 10001
 WORKDIR ${WORK_DIR}
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "tail", "-f", "/dev/null" ]
