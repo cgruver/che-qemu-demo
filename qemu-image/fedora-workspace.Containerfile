@@ -6,7 +6,7 @@ ENV HOME=${USER_HOME_DIR}
 ENV BUILDAH_ISOLATION=chroot
 ENV PATH=${PATH}:/projects/bin
 COPY --chown=0:0 entrypoint.sh /
-RUN dnf install -y procps-ng git tar gzip zip xz unzip which shadow-utils bash zsh vi wget jq qemu-system-aarch64 guestfs-tools libbrotli podman buildah skopeo podman-docker; \
+RUN dnf install -y openssh-clients libbrotli procps-ng git tar gzip zip xz unzip which shadow-utils bash zsh vi wget jq qemu-system-aarch64 guestfs-tools libbrotli podman buildah skopeo podman-docker; \
   dnf update -y ; \
   dnf clean all ; \
   mkdir -p ${USER_HOME_DIR} ; \
@@ -22,3 +22,4 @@ RUN dnf install -y procps-ng git tar gzip zip xz unzip which shadow-utils bash z
 USER 10001
 WORKDIR ${WORK_DIR}
 ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "tail", "-f", "/dev/null" ]
