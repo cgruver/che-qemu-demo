@@ -16,6 +16,8 @@ components:
     env:
     - name: SHELL
       value: "/bin/zsh"
+    - name: VSCODE_DEFAULT_WORKSPACE
+      value: "/projects/che-qemu-demo/che-qemu-demo.code-workspace"
 - name: qemu
   container: 
     image: image-registry.openshift-image-registry.svc:5000/che-dev-images/qemu-dev:latest
