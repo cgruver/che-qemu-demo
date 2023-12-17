@@ -1,0 +1,5 @@
+FROM scratch
+
+ARG VM_FILES_DIR
+
+COPY ${VM_FILES_DIR}/ /

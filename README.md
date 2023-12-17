@@ -55,25 +55,41 @@ cp hda.qcow2 debian-golden-image.qcow2
 ```
 
 ```bash
-qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel /virtual-machines/debian/vmlinuz -initrd /virtual-machines/debian/initrd.img -append 'root=/dev/vda2' -drive if=none,file=/virtual-machines/debian/hda.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -nographic
-```
-
-```bash
 guestfish --ro -i hda.qcow2
 ls /boot
 download /boot/initrd.img-5.10.0-26-arm64 initrd.img
 ```
 
 ```bash
-guestfish --ro -i -a ./hda.qcow2 << EOF > files.out
+WORK_DIR=$(mktemp -d)
+VM_DIR=${PROJECTS_ROOT}/vm
+guestfish --ro -i -a ./hda.qcow2 << EOF > ${WORK_DIR}/files.out
 ls /boot
 EOF
-KERNEL=$(cat files.out | grep vmlinuz- )
-INITRD=$(cat files.out | grep initrd.img- )
+KERNEL=$(cat ${WORK_DIR}/files.out | grep vmlinuz- )
+INITRD=$(cat ${WORK_DIR}/files.out | grep initrd.img- )
 guestfish --ro -i -a ./hda.qcow2 << EOF
-download /boot/${KERNEL} /projects/vm/vmlinuz
+download /boot/${KERNEL} ${VM_DIR}/vmlinuz
 EOF
 guestfish --ro -i -a ./hda.qcow2 << EOF
-download /boot/${INITRD} /projects/vm/initrd.img
+download /boot/${INITRD} ${VM_DIR}/initrd.img
 EOF
+
+oc new-project qemu-images
+oc policy add-role-to-group system:image-puller system:serviceaccounts -n qemu-images
+oc policy add-role-to-group system:image-puller system:authenticated -n qemu-images
+
+podman build --build-arg VM_FILES_DIR=${VM_DIR} -t image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest -f vm.Containerfile .
+podman push image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest
 ```
+
+```bash
+podman pull image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest
+podman create --name vm-files image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest ls
+podman copy vm-files:/ .
+```
+
+```bash
+qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel ${VM_DIR}/vmlinuz -initrd ${VM_DIR}/initrd.img -append 'root=/dev/vda2' -drive if=none,file=${VM_DIR}/hda.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -nographic
+```
+

@@ -14,6 +14,7 @@ RUN microdnf --disableplugin=subscription-manager install -y procps-ng openssl c
   setcap cap_setuid+ep /usr/bin/newuidmap ; \
   setcap cap_setgid+ep /usr/bin/newgidmap ; \
   mkdir -p ${HOME}/.config/containers ; \
+  (echo '[storage]';echo 'driver = "vfs"') > "${HOME}"/.config/containers/storage.conf ; \
   touch /etc/subgid /etc/subuid ; \
   chmod -R g=u /etc/passwd /etc/group /etc/subuid /etc/subgid ; \
   chgrp -R 0 /home ; \
