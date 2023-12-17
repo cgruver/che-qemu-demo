@@ -84,9 +84,13 @@ podman push image-registry.openshift-image-registry.svc:5000/qemu-images/debian-
 ```
 
 ```bash
+VM_DIR=${PROJECTS_ROOT}/vm
+mkdir -p ${VM_DIR}
 podman pull image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest
 podman create --name vm-files image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest ls
-podman copy vm-files:/ .
+podman cp vm-files:/ ${VM_DIR}/
+podman container rm vm-files
+podman image rm image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest
 ```
 
 ```bash
