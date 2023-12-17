@@ -44,14 +44,14 @@ cp hda.qcow2 debian-golden-image.qcow2
 ```
 
 ```bash
-export LIBGUESTFS_BACKEND=direct
-virt-filesystems -a hda.qcow2
-virt-ls -a hda.qcow2 /boot/
-virt-copy-out -a hda.qcow2 /boot/initrd.img-5.10.0-26-arm64 /boot/vmlinuz-5.10.0-26-arm64 .
-mkdir -p /virtual-machines/debian
-cp initrd.img-5.10.0-26-arm64 /virtual-machines/debian/initrd.img
-cp vmlinuz-5.10.0-26-arm64 /virtual-machines/debian/vmlinuz
-cp hda.qcow2 /virtual-machines/debian
+# export LIBGUESTFS_BACKEND=direct
+# virt-filesystems -a hda.qcow2
+# virt-ls -a hda.qcow2 /boot/
+# virt-copy-out -a hda.qcow2 /boot/initrd.img-5.10.0-26-arm64 /boot/vmlinuz-5.10.0-26-arm64 .
+# mkdir -p /virtual-machines/debian
+# cp initrd.img-5.10.0-26-arm64 /virtual-machines/debian/initrd.img
+# cp vmlinuz-5.10.0-26-arm64 /virtual-machines/debian/vmlinuz
+# cp hda.qcow2 /virtual-machines/debian
 ```
 
 ```bash
