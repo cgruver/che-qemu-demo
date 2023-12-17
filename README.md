@@ -1,8 +1,14 @@
 # kubevirt-cpu-emulation
 Testing the feasibility of running aarch64 guest on x86_64 host
 
-```
-dnf install -y guestfs-tools
+```bash
+oc new-project che-dev-images
+oc apply -f qemu-image/tools-build.yaml
+oc start-build qemu-dev -n che-dev-images -w -F
+oc start-build qemu-workspace -n che-dev-images -w -F
+oc start-build fedora-workspace -n che-dev-images -w -F
+oc policy add-role-to-group system:image-puller system:serviceaccounts -n che-dev-images
+
 ```
 
 
