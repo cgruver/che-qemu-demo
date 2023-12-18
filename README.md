@@ -8,34 +8,6 @@ oc start-build qemu-dev -n che-dev-images -w -F
 oc start-build qemu-workspace -n che-dev-images -w -F
 oc start-build fedora-workspace -n che-dev-images -w -F
 oc policy add-role-to-group system:image-puller system:serviceaccounts -n che-dev-images
-
-```
-
-
-```bash
-fdisk -l 2023-12-05-raspios-bookworm-arm64-lite.img
-
-echo $(( 8192*512 ))
-
-mount -o loop,offset=4194304 2023-12-05-raspios-bookworm-arm64-lite.img /mnt
-cp /mnt/kernel8.img ~/
-cp /mnt/bcm2710-rpi-3-b-plus.dtb ~/
-umount /mnt
-
-qemu-img resize 2023-12-05-raspios-bookworm-arm64-lite.img 4G
-```
-
-```bash
-qemu-system-aarch64 -machine raspi3b -cpu cortex-a72 -smp 4 -m 1G -kernel kernel8.img -append "root=/dev/mmcblk0p2 rootdelay=1 rootfstype=ext4 rw panic=0 console=ttyAMA0,115200" -sd 2023-12-05-raspios-bookworm-arm64-lite.img -dtb bcm2710-rpi-3-b-plus.dtb -display none -monitor telnet:127.0.0.1:5555,server,nowait -nographic -serial stdio
-
-qemu-system-aarch64 -machine raspi3b -smp 4 -m 1G -kernel kernel8.img -append "rw loglevel=8 root=/dev/mmcblk0p2 rootdelay=1 rootfstype=ext4 rw panic=0 console=ttyAMA0,115200" -sd 2023-12-05-raspios-bookworm-arm64-lite.img -dtb bcm2710-rpi-3-b-plus.dtb -display none -monitor telnet:127.0.0.1:5555,server,nowait -nographic -serial stdio
-
-qemu-system-aarch64 -M raspi3 -append "rw earlyprintk loglevel=8 console=ttyAMA0,115200 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootdelay=1" -dtb bcm2710-rpi-3-b-plus.dtb -sd 2021-10-30-raspios-bullseye-armhf.img -kernel kernel8.img -m 1G -smp 4 -serial stdio -usb -device usb-mouse -device usb-kbd -vnc 192.168.2.1:0
-```
-
-
-```bash
-virt-install --name aarch64-f32-cdrom --ram 2048 --disk size=10 --os-variant fedora39 --arch aarch64 --cdrom /root/Fedora-Server-netinst-aarch64-39-1.5.iso
 ```
 
 ## Build a Debian Bullseye aarch64 VM Image
@@ -93,3 +65,30 @@ podman image rm image-registry.openshift-image-registry.svc:5000/qemu-images/deb
 qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel ${VM_DIR}/vmlinuz -initrd ${VM_DIR}/initrd.img -append 'root=/dev/vda2' -drive if=none,file=${VM_DIR}/hda.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -nographic
 ```
 
+## Notes - Not Working
+
+```bash
+fdisk -l 2023-12-05-raspios-bookworm-arm64-lite.img
+
+echo $(( 8192*512 ))
+
+mount -o loop,offset=4194304 2023-12-05-raspios-bookworm-arm64-lite.img /mnt
+cp /mnt/kernel8.img ~/
+cp /mnt/bcm2710-rpi-3-b-plus.dtb ~/
+umount /mnt
+
+qemu-img resize 2023-12-05-raspios-bookworm-arm64-lite.img 4G
+```
+
+```bash
+qemu-system-aarch64 -machine raspi3b -cpu cortex-a72 -smp 4 -m 1G -kernel kernel8.img -append "root=/dev/mmcblk0p2 rootdelay=1 rootfstype=ext4 rw panic=0 console=ttyAMA0,115200" -sd 2023-12-05-raspios-bookworm-arm64-lite.img -dtb bcm2710-rpi-3-b-plus.dtb -display none -monitor telnet:127.0.0.1:5555,server,nowait -nographic -serial stdio
+
+qemu-system-aarch64 -machine raspi3b -smp 4 -m 1G -kernel kernel8.img -append "rw loglevel=8 root=/dev/mmcblk0p2 rootdelay=1 rootfstype=ext4 rw panic=0 console=ttyAMA0,115200" -sd 2023-12-05-raspios-bookworm-arm64-lite.img -dtb bcm2710-rpi-3-b-plus.dtb -display none -monitor telnet:127.0.0.1:5555,server,nowait -nographic -serial stdio
+
+qemu-system-aarch64 -M raspi3 -append "rw earlyprintk loglevel=8 console=ttyAMA0,115200 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootdelay=1" -dtb bcm2710-rpi-3-b-plus.dtb -sd 2021-10-30-raspios-bullseye-armhf.img -kernel kernel8.img -m 1G -smp 4 -serial stdio -usb -device usb-mouse -device usb-kbd -vnc 192.168.2.1:0
+```
+
+
+```bash
+virt-install --name aarch64-f32-cdrom --ram 2048 --disk size=10 --os-variant fedora39 --arch aarch64 --cdrom /root/Fedora-Server-netinst-aarch64-39-1.5.iso
+```
