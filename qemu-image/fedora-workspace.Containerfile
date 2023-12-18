@@ -12,11 +12,11 @@ RUN dnf install -y openssh-clients libbrotli procps-ng git tar gzip zip xz unzip
   dnf update -y ; \
   dnf clean all ; \
   mkdir -p /usr/local \ ;
-  TEMP_DIR="$(mktemp -d)" \ ;
+  TEMP_DIR=$(mktemp -d) \ ;
   curl -fsSL -o ${TEMP_DIR}/node.tz https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz ; \
   tar -x --no-auto-compress -f ${TEMP_DIR}/node.tz -C ${TEMP_DIR} ; \
   mv ${TEMP_DIR}/node-${NODE_VERSION}-linux-x64 /usr/local/node ; \
-  rm -rf "${TEMP_DIR}" ; \
+  rm -rf ${TEMP_DIR} ; \
   mkdir -p ${USER_HOME_DIR} ; \
   mkdir -p ${WORK_DIR} ; \
   setcap cap_setuid+ep /usr/bin/newuidmap ; \
