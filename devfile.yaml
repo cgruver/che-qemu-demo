@@ -7,20 +7,6 @@ components:
 - name: workspace
   container: 
     image: image-registry.openshift-image-registry.svc:5000/che-dev-images/fedora-workspace:latest
-    memoryLimit: 2Gi
-    memoryRequest: 1Gi
-    cpuRequest: 500m
-    cpuLimit: 1000m
-    mountSources: true
-    sourceMapping: /projects
-    env:
-    - name: SHELL
-      value: "/bin/zsh"
-    - name: VSCODE_DEFAULT_WORKSPACE
-      value: "/projects/che-qemu-demo/che-qemu-demo.code-workspace"
-- name: qemu
-  container: 
-    image: image-registry.openshift-image-registry.svc:5000/che-dev-images/qemu-dev:latest
     memoryLimit: 6Gi
     memoryRequest: 1Gi
     cpuRequest: 500m
@@ -30,6 +16,8 @@ components:
     env:
     - name: SHELL
       value: "/bin/zsh"
+    - name: VSCODE_DEFAULT_WORKSPACE
+      value: "/projects/che-qemu-demo/che-qemu-demo.code-workspace"
 - volume:
     size: 4Gi
   name: projects

@@ -22,6 +22,7 @@ RUN dnf install -y openssh-clients libbrotli procps-ng git tar gzip zip xz unzip
   setcap cap_setuid+ep /usr/bin/newuidmap ; \
   setcap cap_setgid+ep /usr/bin/newgidmap ; \
   mkdir -p ${HOME}/.config/containers ; \
+  (echo '[storage]';echo 'driver = "vfs"') > "${HOME}"/.config/containers/
   touch /etc/subgid /etc/subuid ; \
   chmod -R g=u /etc/passwd /etc/group /etc/subuid /etc/subgid ; \
   chgrp -R 0 /home ; \

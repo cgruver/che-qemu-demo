@@ -38,46 +38,36 @@ qemu-system-aarch64 -M raspi3 -append "rw earlyprintk loglevel=8 console=ttyAMA0
 virt-install --name aarch64-f32-cdrom --ram 2048 --disk size=10 --os-variant fedora39 --arch aarch64 --cdrom /root/Fedora-Server-netinst-aarch64-39-1.5.iso
 ```
 
-```bash
-wget -O installer-linux http://http.us.debian.org/debian/dists/bullseye/main/installer-arm64/current/images/netboot/debian-installer/arm64/linux
-wget -O installer-initrd.gz http://http.us.debian.org/debian/dists/bullseye/main/installer-arm64/current/images/netboot/debian-installer/arm64/initrd.gz
-
-qemu-img create -f qcow2 hda.qcow2 5G
-
-qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel installer-linux -initrd installer-initrd.gz -drive if=none,file=hda.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -nographic -no-reboot
-
-cp hda.qcow2 debian-golden-image.qcow2
-```
+## Build a Debian Bullseye aarch64 VM Image
 
 ```bash
-# export LIBGUESTFS_BACKEND=direct
-# virt-filesystems -a hda.qcow2
-# virt-ls -a hda.qcow2 /boot/
-# virt-copy-out -a hda.qcow2 /boot/initrd.img-5.10.0-26-arm64 /boot/vmlinuz-5.10.0-26-arm64 .
-# mkdir -p /virtual-machines/debian
-# cp initrd.img-5.10.0-26-arm64 /virtual-machines/debian/initrd.img
-# cp vmlinuz-5.10.0-26-arm64 /virtual-machines/debian/vmlinuz
-# cp hda.qcow2 /virtual-machines/debian
-```
+INSTALL_DIR=${PROJECTS_ROOT}/debian-bullseye-aarch64-install
+INSTALL_DISK=${INSTALL_DIR}/debian-golden-image.qcow2
+mkdir -p ${INSTALL_DIR}
 
-```bash
-guestfish --ro -i hda.qcow2
-ls /boot
-download /boot/initrd.img-5.10.0-26-arm64 initrd.img
+wget -O ${INSTALL_DIR}/installer-linux http://http.us.debian.org/debian/dists/bullseye/main/installer-arm64/current/images/netboot/debian-installer/arm64/linux
+wget -O ${INSTALL_DIR}/installer-initrd.gz http://http.us.debian.org/debian/dists/bullseye/main/installer-arm64/current/images/netboot/debian-installer/arm64/initrd.gz
+
+qemu-img create -f qcow2 ${INSTALL_DISK} 5G
+
+qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel ${INSTALL_DIR}/installer-linux -initrd ${INSTALL_DIR}/installer-initrd.gz -drive if=none,file=${INSTALL_DISK},format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -nographic -no-reboot
 ```
 
 ```bash
 WORK_DIR=$(mktemp -d)
 VM_DIR=${PROJECTS_ROOT}/vm
-guestfish --ro -i -a ./hda.qcow2 << EOF > ${WORK_DIR}/files.out
+VM_DISK=${VM_DIR}/hda.qcow2
+mkdir -p ${VM_DIR}
+cp ${INSTALL_DISK} ${VM_DISK}
+guestfish --ro -i -a ${VM_DISK} << EOF > ${WORK_DIR}/files.out
 ls /boot
 EOF
 KERNEL=$(cat ${WORK_DIR}/files.out | grep vmlinuz- )
 INITRD=$(cat ${WORK_DIR}/files.out | grep initrd.img- )
-guestfish --ro -i -a ./hda.qcow2 << EOF
+guestfish --ro -i -a ${VM_DISK} << EOF
 download /boot/${KERNEL} ${VM_DIR}/vmlinuz
 EOF
-guestfish --ro -i -a ./hda.qcow2 << EOF
+guestfish --ro -i -a ${VM_DISK} << EOF
 download /boot/${INITRD} ${VM_DIR}/initrd.img
 EOF
 
