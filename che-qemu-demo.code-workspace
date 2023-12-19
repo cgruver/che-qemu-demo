@@ -20,6 +20,6 @@
 		"workbench.preferredDarkColorTheme": "Winter is Coming (Dark Blue)",
 		"workbench.preferredLightColorTheme": "Winter is Coming (Light)",
 		"files.autoSave": "off",
-		"editor.wordWrap": "bounded"
+		"editor.wordWrap": "on"
 	}
 }

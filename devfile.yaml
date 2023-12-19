@@ -6,7 +6,8 @@ metadata:
 components:
 - name: workspace
   container: 
-    image: image-registry.openshift-image-registry.svc:5000/che-dev-images/fedora-workspace:latest
+    image: quay.io/cgruver0/che/fedora-qemu-workspace:latest
+    # image: image-registry.openshift-image-registry.svc:5000/che-dev-images/fedora-workspace:latest
     memoryLimit: 6Gi
     memoryRequest: 1Gi
     cpuRequest: 500m
@@ -44,6 +45,16 @@ commands:
     component: oc-cli
     label: Copy OpenShift CLI
   id: cp-oc-cli
+- exec:
+    commandLine: ${PROJECT_SOURCE}/qemu-vm.sh -i
+    component: workspace
+    label: Initialize aarch64 Debian VM
+  id: init-vm
+- exec:
+    commandLine: ${PROJECT_SOURCE}/qemu-vm.sh -s
+    component: workspace
+    label: Start aarch64 Debian VM
+  id: start-vm
 events:
   preStart:
     - cp-oc-cli

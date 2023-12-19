@@ -26,6 +26,8 @@ qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel ${INSTALL_DIR}/insta
 ```
 
 ```bash
+INSTALL_DIR=${PROJECTS_ROOT}/debian-bullseye-aarch64-install
+INSTALL_DISK=${INSTALL_DIR}/debian-golden-image.qcow2
 WORK_DIR=$(mktemp -d)
 VM_DIR=${PROJECTS_ROOT}/vm
 VM_DISK=${VM_DIR}/hda.qcow2
