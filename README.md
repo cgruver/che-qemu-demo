@@ -62,10 +62,12 @@ podman image rm image-registry.openshift-image-registry.svc:5000/qemu-images/deb
 ```
 
 ```bash
-qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel ${VM_DIR}/vmlinuz -initrd ${VM_DIR}/initrd.img -append 'root=/dev/vda2' -drive if=none,file=${VM_DIR}/hda.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -nographic
+qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel ${VM_DIR}/vmlinuz -initrd ${VM_DIR}/initrd.img -append 'root=/dev/vda2' -drive if=none,file=${VM_DIR}/hda.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet,hostfwd=tcp::2222-:22 -device virtio-net-pci,netdev=mynet -nographic
+
+ssh -p 2222 root@127.0.0.1
 ```
 
-## Notes - Not Working
+## Notes - Not Working Yet.  
 
 ```bash
 fdisk -l 2023-12-05-raspios-bookworm-arm64-lite.img

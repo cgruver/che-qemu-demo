@@ -18,8 +18,13 @@ components:
       value: "/bin/zsh"
     - name: VSCODE_DEFAULT_WORKSPACE
       value: "/projects/che-qemu-demo/che-qemu-demo.code-workspace"
+    endpoints:
+      - exposure: internal
+        name: guest-ssh
+        protocol: tcp
+        targetPort: 2222
 - volume:
-    size: 4Gi
+    size: 20Gi
   name: projects
 - name: oc-cli
   container:
