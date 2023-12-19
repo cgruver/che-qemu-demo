@@ -47,7 +47,7 @@ oc new-project qemu-images
 oc policy add-role-to-group system:image-puller system:serviceaccounts -n qemu-images
 oc policy add-role-to-group system:image-puller system:authenticated -n qemu-images
 
-podman build --build-arg VM_FILES_DIR=${VM_DIR} -t image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest -f vm.Containerfile .
+podman build --build-arg VM_FILES_DIR=${VM_DIR} -t image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest -f ${PROJECT_SOURCE}/vm.Containerfile /
 podman push image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest
 ```
 
