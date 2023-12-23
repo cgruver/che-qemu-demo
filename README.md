@@ -12,6 +12,8 @@ oc policy add-role-to-group system:image-puller system:serviceaccounts -n che-de
 
 ## Build a Debian Bullseye aarch64 VM Image
 
+### Run The Installer
+
 ```bash
 INSTALL_DIR=${PROJECTS_ROOT}/debian-bullseye-aarch64-install
 INSTALL_DISK=${INSTALL_DIR}/debian-golden-image.qcow2
@@ -24,6 +26,8 @@ qemu-img create -f qcow2 ${INSTALL_DISK} 5G
 
 qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel ${INSTALL_DIR}/installer-linux -initrd ${INSTALL_DIR}/installer-initrd.gz -drive if=none,file=${INSTALL_DISK},format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet -device virtio-net-pci,netdev=mynet -nographic -no-reboot
 ```
+
+### Extract the kernel and initrd
 
 ```bash
 INSTALL_DIR=${PROJECTS_ROOT}/debian-bullseye-aarch64-install
@@ -45,6 +49,8 @@ guestfish --ro -i -a ${VM_DISK} << EOF
 download /boot/${INITRD} ${VM_DIR}/initrd.img
 EOF
 
+### Create an image with the VM artifacts
+
 oc new-project qemu-images
 oc policy add-role-to-group system:image-puller system:serviceaccounts -n qemu-images
 oc policy add-role-to-group system:image-puller system:authenticated -n qemu-images
@@ -52,6 +58,8 @@ oc policy add-role-to-group system:image-puller system:authenticated -n qemu-ima
 podman build --build-arg VM_FILES_DIR=${VM_DIR} -t image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest -f ${PROJECT_SOURCE}/vm.Containerfile /
 podman push image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest
 ```
+
+### Launch a VM from the stored golden image
 
 ```bash
 VM_DIR=${PROJECTS_ROOT}/vm
