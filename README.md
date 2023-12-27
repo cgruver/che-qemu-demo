@@ -1,14 +1,6 @@
-# kubevirt-cpu-emulation
-Testing the feasibility of running aarch64 guest on x86_64 host
+# QEMU In OpenShift Dev Spaces
 
-```bash
-oc new-project che-dev-images
-oc apply -f qemu-image/tools-build.yaml
-oc start-build qemu-dev -n che-dev-images -w -F
-oc start-build qemu-workspace -n che-dev-images -w -F
-oc start-build fedora-workspace -n che-dev-images -w -F
-oc policy add-role-to-group system:image-puller system:serviceaccounts -n che-dev-images
-```
+Testing the feasibility of running aarch64 guest on x86_64 OpenShift Cluster
 
 ## Build a Debian Bullseye aarch64 VM Image
 
@@ -48,9 +40,11 @@ EOF
 guestfish --ro -i -a ${VM_DISK} << EOF
 download /boot/${INITRD} ${VM_DIR}/initrd.img
 EOF
+```
 
 ### Create an image with the VM artifacts
 
+```bash
 oc new-project qemu-images
 oc policy add-role-to-group system:image-puller system:serviceaccounts -n qemu-images
 oc policy add-role-to-group system:image-puller system:authenticated -n qemu-images
@@ -59,7 +53,9 @@ podman build --build-arg VM_FILES_DIR=${VM_DIR} -t image-registry.openshift-imag
 podman push image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest
 ```
 
-### Launch a VM from the stored golden image
+## Launch a VM from the stored golden image
+
+### Extract the VM artifacts from the container image
 
 ```bash
 VM_DIR=${PROJECTS_ROOT}/vm
@@ -71,13 +67,28 @@ podman container rm vm-files
 podman image rm image-registry.openshift-image-registry.svc:5000/qemu-images/debian-aarch64:latest
 ```
 
+### Run the VM with port 22 mapped to 2222 in the workspace
+
 ```bash
 qemu-system-aarch64 -M virt -m 1024 -cpu cortex-a53 -kernel ${VM_DIR}/vmlinuz -initrd ${VM_DIR}/initrd.img -append 'root=/dev/vda2' -drive if=none,file=${VM_DIR}/hda.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet,hostfwd=tcp::2222-:22 -device virtio-net-pci,netdev=mynet -nographic
+```
 
+### Connect to the running VM from a terminal in the workspace
+
+```bash
 ssh -p 2222 root@127.0.0.1
 ```
 
-## Notes - Not Working Yet.  
+## Raw Notes  
+
+```bash
+oc new-project che-dev-images
+oc apply -f qemu-image/tools-build.yaml
+oc start-build qemu-dev -n che-dev-images -w -F
+oc start-build qemu-workspace -n che-dev-images -w -F
+oc start-build fedora-workspace -n che-dev-images -w -F
+oc policy add-role-to-group system:image-puller system:serviceaccounts -n che-dev-images
+```
 
 ```bash
 fdisk -l 2023-12-05-raspios-bookworm-arm64-lite.img
