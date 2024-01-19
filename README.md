@@ -81,6 +81,8 @@ ssh -p 2222 root@127.0.0.1
 
 ## Raw Notes  
 
+Initial pwd for Debian image: `devspaces`
+
 ```bash
 oc new-project che-dev-images
 oc apply -f qemu-image/tools-build.yaml
