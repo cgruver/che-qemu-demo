@@ -1,9 +1,6 @@
 {
 	"folders": [
 		{
-			"path": "."
-		},
-		{
 			"name": "che-qemu-demo",
 			"path": "/projects/che-qemu-demo"
 		}
