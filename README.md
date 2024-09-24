@@ -117,3 +117,9 @@ qemu-system-aarch64 -M raspi3 -append "rw earlyprintk loglevel=8 console=ttyAMA0
 ```bash
 virt-install --name aarch64-f32-cdrom --ram 2048 --disk size=10 --os-variant fedora39 --arch aarch64 --cdrom /root/Fedora-Server-netinst-aarch64-39-1.5.iso
 ```
+
+```bash
+qemu-system-aarch64 -M virt -m 4096 -cpu cortex-a53 -kernel vmlinuz-6.8.5-301.fc40.aarch64 -initrd initramfs-6.8.5-301.fc40.aarch64.img -append 'root=/dev/vda1' -drive if=none,file=Fedora-Server-KVM-40-1.14.aarch64.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet,hostfwd=tcp::2222-:22 -device virtio-net-pci,netdev=mynet -nographic
+
+qemu-system-aarch64 -M virt -m 4096 -cpu cortex-a53 -kernel vmlinuz-6.8.5-301.fc40.aarch64 -initrd initramfs-6.8.5-301.fc40.aarch64.img -drive if=none,file=Fedora-Server-KVM-40-1.14.aarch64.qcow2,format=qcow2,id=hd -device virtio-blk-pci,drive=hd -netdev user,id=mynet,hostfwd=tcp::2222-:22 -device virtio-net-pci,netdev=mynet -nographic
+```
